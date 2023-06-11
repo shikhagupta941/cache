@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMain {
 
+
+    /**
+     * This test case is used to test when there is no eviction and expired policy configured
+     * while creating cache then default LRU eviction Policy is applied.
+     * when size of cache is full then least recently used key is removed which is key2.
+     */
     @Test
     public void testCacheWithDefaultConfiguration() {
         CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(5L)
@@ -38,6 +44,13 @@ public class TestMain {
 
     }
 
+    /**
+     * This test case is used to test when TTL expired policy is configured
+     * and default LRU eviction Policy is applied.
+     * when size of cache is full then least recently used key is removed which is key2
+     * as keys are not expired yet.
+     * Once keys are expired those are also removed from cache.
+     */
     @Test
     public void testCacheWithTTLExpiryPolicyAndDefaultEvictionStrategy() {
         CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(5L)
@@ -74,10 +87,13 @@ public class TestMain {
 
     }
 
-    @Test
     /**
-     *
+     * This test case is used to test when TTL expired policy is configured
+     * and No eviction Policy is configured.
+     * when size of cache is full then it through exception as keys are not expired and
+     * eviction policy is not doing anything.
      */
+    @Test
     public void testCacheWithTTLExpiryPolicyAndCustomizedEvictionStrategy() {
         CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(5L)
                 .setEvictionStrategy(new TestEvictionStrategyFactory()).build();
@@ -90,7 +106,7 @@ public class TestMain {
         cache.put("key5","val5");
         cache.put("key1","val11");
 
-       CacheException exception= assertThrows(CacheException.class, () -> {
+        CacheException exception= assertThrows(CacheException.class, () -> {
             cache.put("key6","val6");
         });
 
@@ -100,10 +116,11 @@ public class TestMain {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    @Test
+
     /**
-     *
+     * This test case tests that cache with different types of Key and Value can be created.
      */
+    @Test
     public void testCacheWithDifferentTypes() {
         CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(1L).build();
         CacheManager cacheManager = new CacheManager();
@@ -116,9 +133,21 @@ public class TestMain {
         assertEquals(1,cache1.get("key1"));
     }
 
+    /**
+     *  This test case tests 6 events occurs as following:
+     *  eventType:ADDED
+     *  eventType:ADDED
+     *  eventType:ADDED
+     *  eventType:UPDATED
+     *  eventType:EVICTED
+     *  eventType:ADDED
+     *  As first three put calls to cache generate add event and next put generate update event
+     *  as key is already there.As size of cache is full so next put will first evict the LRU key
+     *  and then add event is generated.
+     */
+    @Test
     public void testCacheEvents() {
-        CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(3L)
-                .setExpiryPolicy(new TTLExpiryPolicyFactory(100L)).build();
+        CacheConfiguration cacheConfiguration= new CacheConfiguration.CacheConfigurationBuilder(3L).build();
         CacheManager cacheManager = new CacheManager();
         Cache<String,String> cache  = cacheManager.createCache("cache1",cacheConfiguration);
 
@@ -130,12 +159,6 @@ public class TestMain {
         cache.put("key3","val3");
         cache.put("key1","val11");
         cache.put("key6","val6");
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        cache.get("key1");
         assertAll(
                 () -> assertEquals(6, listner.getTotalEvents())
         );

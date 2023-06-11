@@ -1,5 +1,8 @@
 package org.shikha.expiry;
 
+/**
+ * Factory class to provide the instance of TTL Expiry Policy.
+ */
 public class TTLExpiryPolicyFactory implements ExpiryPolicyFactory {
 
     private Long ttl;

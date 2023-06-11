@@ -3,6 +3,14 @@ package org.shikha.configuration;
 import org.shikha.eviction.EvictionStrategyFactory;
 import org.shikha.expiry.ExpiryPolicyFactory;
 
+/**
+ * This class is used to configure the following properties for cache.
+ * a) Size of Cache.
+ * b) Expiry Policy
+ * c) Eviction Strategy.
+ * Size is the only mandatory properties,other properties can be pluggable as per requirement.
+ */
+
 public class CacheConfiguration {
     private EvictionStrategyFactory evictionStrategyFactory;
     private Long size;
@@ -10,9 +18,9 @@ public class CacheConfiguration {
     private ExpiryPolicyFactory expiryPolicyFactory;
 
     private CacheConfiguration(CacheConfigurationBuilder cacheConfigurationBuilder) {
-    this.evictionStrategyFactory = cacheConfigurationBuilder.evictionStrategyFactory;
-    this.size = cacheConfigurationBuilder.size;
-    this.expiryPolicyFactory = cacheConfigurationBuilder.expiryPolicyFactory;
+        this.evictionStrategyFactory = cacheConfigurationBuilder.evictionStrategyFactory;
+        this.size = cacheConfigurationBuilder.size;
+        this.expiryPolicyFactory = cacheConfigurationBuilder.expiryPolicyFactory;
     }
 
     public EvictionStrategyFactory getEvictionStrategyFactory() {

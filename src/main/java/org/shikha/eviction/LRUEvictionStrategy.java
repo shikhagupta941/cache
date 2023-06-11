@@ -1,5 +1,9 @@
 package org.shikha.eviction;
 
+/**
+ * LRUEvictionStrategy is used to evict the least recently keys.
+ * @param <K>: type of cache key.
+ */
 public class LRUEvictionStrategy<K> implements  EvictionStrategy<K>{
 
     Node head,tail;
@@ -33,6 +37,10 @@ public class LRUEvictionStrategy<K> implements  EvictionStrategy<K>{
     }
 
 
+    /**
+     * this method remove the least recently used key from doubly linked List.
+     * @return returns the evicted key so that cache can remove the entry from its map.
+     */
     @Override
     public K evictKey() {
         Node temp = tail.prev;
@@ -41,6 +49,12 @@ public class LRUEvictionStrategy<K> implements  EvictionStrategy<K>{
         return temp.getKey();
     }
 
+    /**
+     * This method is used to add the key in doubly linked List.
+     * @param key key which needs to be tracked.
+     * @return It returns the reference of added key in Node so that
+     * it can be used to update key and user needs not to iterrate the whole list.
+     */
     @Override
     public EvictionKeyHandle addKey(K key) {
         Node newNode = new Node(key);
@@ -51,6 +65,12 @@ public class LRUEvictionStrategy<K> implements  EvictionStrategy<K>{
         return newNode;
     }
 
+    /**
+     * This method is used to update the key.
+     * @param key key
+     * @param evictionKeyHandle to get the pointer of node which needs to be updated.
+     * @return EvictionKeyHandle to refer again in Doubly Linked List.
+     */
     @Override
     public EvictionKeyHandle updateKey(K key, EvictionKeyHandle evictionKeyHandle) {
         Node node = evictionKeyHandle.get();

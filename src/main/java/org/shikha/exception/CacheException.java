@@ -1,5 +1,8 @@
 package org.shikha.exception;
 
+/**
+ * Cache Exception is thrown to handle exceptions.
+ */
 public class CacheException extends RuntimeException{
     private static final long serialVersionUID = 1L;
 
